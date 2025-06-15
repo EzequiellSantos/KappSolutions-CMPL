@@ -34,11 +34,11 @@ const vehicleRoutes = require('./routes/vehicleRoutes')
 
 app.use('/api/company', companyRoutes)
 app.use('/api/inventory', inventoryRoutes)
-app.use('/api/members', memberRoutes)
+app.use('/api/members', memberRoutes) //futuramente
 app.use('/api/product', productRoutes)
 app.use('/api/tracking', trackingRoutes)
 app.use('/api/vehicle', vehicleRoutes)
-app.use('/api/auth', companyRoutes)
+app.use('/api/auth', companyRoutes) // pode deixar
 
 const PORT = process.env.PORT || 3000
 

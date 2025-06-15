@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+// vendedores
 const ProductSummarySchema = new mongoose.Schema({
     code: String,
     description: String,

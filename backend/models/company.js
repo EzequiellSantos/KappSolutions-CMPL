@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+// empresas
 
 const CompanySchema = new mongoose.Schema({
     name: {
