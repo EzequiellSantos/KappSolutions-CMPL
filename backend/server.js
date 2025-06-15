@@ -8,9 +8,38 @@ mongoose.set('debug', true);
 
 const app = express()
 
+const allowedOrigins = [
+    '*',
+    'http://localhost:3000',
+];
+
 const corsOptions = {
-    origin: '*',
-    optionsSucessStatus: 200
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionsSuccessStatus: 200,
+  allowedHeaders: ['Content-Type', 'x-api-key'] 
+};
+
+function checkApiKey(req, res, next) {
+
+  const userKey = req.headers['x-api-key'];
+
+  if (userKey && userKey === API_KEY) {
+
+    next();
+
+  } else {
+
+    res.status(403).json({ error: 'Chave de API inválida ou ausente' });
+    
+  }
+
 }
 
 app.use(cors(corsOptions))
@@ -19,6 +48,7 @@ app.use(bodyParser.json())
 
 
 const URI = process.env.URI
+const API_KEY = process.env.API_KEY;
 
 mongoose.connect(URI)
     .then(() => console.log('Conectado ao MongoDB com sucesso!'))
@@ -32,13 +62,13 @@ const productRoutes = require('./routes/productRoutes')
 const trackingRoutes = require('./routes/trackingRoutes')
 const vehicleRoutes = require('./routes/vehicleRoutes')
 
-app.use('/api/company', companyRoutes)
-app.use('/api/inventory', inventoryRoutes)
-app.use('/api/members', memberRoutes) //futuramente
-app.use('/api/product', productRoutes)
-app.use('/api/tracking', trackingRoutes)
-app.use('/api/vehicle', vehicleRoutes)
-app.use('/api/auth', companyRoutes) // pode deixar
+app.use('/api/company', checkApiKey, companyRoutes)
+app.use('/api/inventory', checkApiKey, inventoryRoutes)
+app.use('/api/members', checkApiKey, memberRoutes) //futuramente
+app.use('/api/product', checkApiKey, productRoutes)
+app.use('/api/tracking', checkApiKey, trackingRoutes)
+app.use('/api/vehicle', checkApiKey, vehicleRoutes)
+app.use('/api/auth', checkApiKey, companyRoutes) // pode deixar
 
 const PORT = process.env.PORT || 3000
 
